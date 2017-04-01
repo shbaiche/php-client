@@ -3,6 +3,7 @@ class SMSClient {
 
 	private $account = "";
 	private $pswd = "";
+	private $proxy = null;
 
 	/**
 	 *
@@ -10,9 +11,10 @@ class SMSClient {
 	 * @param string $pswd    密码
 	 *
 	 */
-	public function __construct($account, $pswd) {
+	public function __construct($account, $pswd, $proxy = null) {
 		$this->account = $account;
 		$this->pswd = $pswd;
+		$this->proxy = $proxy;
 	}
 
 	/**
@@ -37,9 +39,9 @@ class SMSClient {
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-		if(defined('MY_PROXY_HOST') && defined('MY_PROXY_PORT')) {
-			curl_setopt($ch, CURLOPT_PROXY, MY_PROXY_HOST);
-			curl_setopt($ch, CURLOPT_PROXYPORT, MY_PROXY_PORT);
+		if(!empty($this->proxy)) {
+			curl_setopt($ch, CURLOPT_PROXY, $this->proxy['host']);
+			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy['port']);
 		}
 		$result = curl_exec($ch);
 		curl_close($ch);
