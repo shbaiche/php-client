@@ -1,23 +1,35 @@
 <?php
 class SMSClient {
 
+	private $account = "";
+	private $pswd = "";
+
+	/**
+	 *
+	 * @param string $account 帐号
+	 * @param string $pswd    密码
+	 *
+	 */
+	public function __construct($account, $pswd) {
+		$this->account = $account;
+		$this->pswd = $pswd;
+	}
+
 	/**
 	 * 通过示远短信平台发送短信
 	 *
 	 * @param string $mobile  手机号
 	 * @param string $msg     短信内容(控制在70个字符内,使用URL方式编码为UTF-8格式)
-	 * @param string $account 帐号
-	 * @param string $pswd    密码
 	 *
 	 * @return string
 	 * @link http://www.18sms.com/Document
 	 */
-	public static function send($mobile, $msg, $account, $pswd, $needStatus = false) {
+	public function send($mobile, $msg, $needStatus = false) {
         $url = "http://send.18sms.com/msg/HttpBatchSendSM?".http_build_query([
 			'mobile'=>$mobile,
 			'msg'=>$msg,
-            'account'=>$account,
-            'pswd'=>$pswd,
+            'account'=>$this->account,
+            'pswd'=>$this->pswd,
             'needstatus'=>$needStatus
 		]);
 		$ch = curl_init();
