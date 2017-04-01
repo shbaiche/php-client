@@ -1,6 +1,20 @@
 <?php
 class SMSClient {
 
+	private $accountSid = "";
+	private $accountToken = "";
+
+	/**
+	 *
+	 * @param string $accountSid   开发者主账户ACCOUNT SID（登陆官网在管理控制台获取）
+	 * @param string $accountToken 账户授权令牌
+	 *
+	 */
+	public function __construct($accountSid, $accountToken) {
+		$this->accountSid = $accountSid;
+		$this->accountToken = $accountToken;
+	}
+
 	/**
 	 * 通过容联云短信平台发送模板短信
 	 *
@@ -8,17 +22,15 @@ class SMSClient {
 	 * @param string $appId        应用Id
 	 * @param string $templateId   模板Id
 	 * @param array  $datas        内容数据，用于替换模板中{序号}
-	 * @param string $accountSid   开发者主账户ACCOUNT SID（登陆官网在管理控制台获取）
-	 * @param string $accountToken 账户授权令牌
 	 *
 	 * @return string
 	 * @link http://www.yuntongxun.com/doc/rest/sms/3_2_2_2.html
 	 */
-	public static function send($to, $appId, $templateId, $datas, $accountSid, $accountToken) {
+	public function send($to, $appId, $templateId, $datas) {
 		$batch = date('YmdHis', time());
-		$sig =  strtoupper(md5($accountSid . $accountToken . $batch));
-		$authen = base64_encode($accountSid . ":" . $batch);
-		$url = "https://app.cloopen.com:8883/2013-12-26/Accounts/{$accountSid}/SMS/TemplateSMS?sig={$sig}";
+		$sig =  strtoupper(md5($this->accountSid . $this->accountToken . $batch));
+		$authen = base64_encode($this->accountSid . ":" . $batch);
+		$url = "https://app.cloopen.com:8883/2013-12-26/Accounts/{$this->accountSid}/SMS/TemplateSMS?sig={$sig}";
 		$headers = [
 			'Accept:application/json',
 			'Content-Type:application/json;charset=utf-8',
