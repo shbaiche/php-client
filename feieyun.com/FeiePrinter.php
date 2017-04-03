@@ -1,23 +1,25 @@
 <?php
 class FeiePrinter {
 
-	private $sn = "";
-	private $key = "";
-	private $host = "";
-	private $proxy = null;
+	private $config = [
+		'sn'=>'',
+		'key'=>'',
+		'host'=>'',
+		'proxy_host'=>null,
+		'proxy_port'=>0
+	];
 
 	/**
 	 *
-	 * @param string $sn      打印机编号
-	 * @param string $key     密钥
-	 * @param string $host    购买机器后,联系客服获取即可
+	 * string $sn         打印机编号
+	 * string $key        密钥
+	 * string $host       购买机器后,联系客服获取即可
+	 * string $proxy_host 代理主机(option)
+	 * int    $proxy_port 代理端口(option)
 	 *
 	 */
-	public function __construct($sn, $key, $host, $proxy = null) {
-		$this->sn = $sn;
-		$this->key = $key;
-		$this->host = $host;
-		$this->proxy = $proxy;
+	public function __construct($params) {
+		$this->config = $params + $this->config;
 	}
 
 	/**
@@ -41,10 +43,10 @@ class FeiePrinter {
 	 * @link http://www.feieyun.com/document.jsp
 	 */
 	public function print($content, $times = 1) {
-		$url = 'http://'.$this->host.'/FeieServer/printOrderAction';
+		$url = 'http://'.$this->config['host'].'/FeieServer/printOrderAction';
 		$data = http_build_query([
-			'sn'=>$this->sn,
-			'key'=>$this->key,
+			'sn'=>$this->config['sn'],
+			'key'=>$this->config['key'],
 			'printContent'=>$content,
 			'times'=>$times
 		]);
@@ -55,9 +57,9 @@ class FeiePrinter {
 		curl_setopt($ch, CURLOPT_POST, TRUE);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-		if(!empty($this->proxy)) {
-			curl_setopt($ch, CURLOPT_PROXY, $this->proxy['host']);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy['port']);
+		if(!empty($this->config['proxy_host'])) {
+			curl_setopt($ch, CURLOPT_PROXY, $this->config['proxy_host']);
+			curl_setopt($ch, CURLOPT_PROXYPORT, $this->config['proxy_port']);
 		}
 		$result = curl_exec($ch);
 		curl_close($ch);
