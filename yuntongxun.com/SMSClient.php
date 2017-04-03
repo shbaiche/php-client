@@ -1,18 +1,19 @@
 <?php
 class SMSClient {
 
-	private $accountSid = "";
-	private $accountToken = "";
+	private $config = [
+		'accountSid'=>'',
+		'accountToken'=>''
+	];
 
 	/**
 	 *
-	 * @param string $accountSid   开发者主账户ACCOUNT SID（登陆官网在管理控制台获取）
-	 * @param string $accountToken 账户授权令牌
+	 * string $accountSid   开发者主账户ACCOUNT SID（登陆官网在管理控制台获取）
+	 * string $accountToken 账户授权令牌
 	 *
 	 */
-	public function __construct($accountSid, $accountToken) {
-		$this->accountSid = $accountSid;
-		$this->accountToken = $accountToken;
+	public function __construct($params) {
+		$this->config = $params + $this->config;
 	}
 
 	/**
@@ -27,10 +28,12 @@ class SMSClient {
 	 * @link http://www.yuntongxun.com/doc/rest/sms/3_2_2_2.html
 	 */
 	public function send($to, $appId, $templateId, $datas) {
+		$accountSid = $this->accountSid;
+		$accountToken = $this->accountToken;
 		$batch = date('YmdHis', time());
-		$sig =  strtoupper(md5($this->accountSid . $this->accountToken . $batch));
-		$authen = base64_encode($this->accountSid . ":" . $batch);
-		$url = "https://app.cloopen.com:8883/2013-12-26/Accounts/{$this->accountSid}/SMS/TemplateSMS?sig={$sig}";
+		$sig =  strtoupper(md5($accountSid . $accountToken . $batch));
+		$authen = base64_encode($accountSid . ":" . $batch);
+		$url = "https://app.cloopen.com:8883/2013-12-26/Accounts/{$accountSid}/SMS/TemplateSMS?sig={$sig}";
 		$headers = [
 			'Accept:application/json',
 			'Content-Type:application/json;charset=utf-8',
