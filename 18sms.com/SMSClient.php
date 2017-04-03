@@ -1,20 +1,23 @@
 <?php
 class SMSClient {
 
-	private $account = "";
-	private $pswd = "";
-	private $proxy = null;
+	private $config = [
+		'account'=>'',
+		'pswd'=>'',
+		'proxy_host'=>null,
+		'proxy_port'=>0
+	];
 
 	/**
 	 *
-	 * @param string $account 帐号
-	 * @param string $pswd    密码
+	 * string $account    帐号
+	 * string $pswd       密码
+	 * string $proxy_host 代理主机(option)
+	 * int    $proxy_port 代理端口(option)
 	 *
 	 */
-	public function __construct($account, $pswd, $proxy = null) {
-		$this->account = $account;
-		$this->pswd = $pswd;
-		$this->proxy = $proxy;
+	public function __construct($params) {
+		$this->config = $params + $this->config;
 	}
 
 	/**
@@ -30,8 +33,8 @@ class SMSClient {
         $url = "http://send.18sms.com/msg/HttpBatchSendSM?".http_build_query([
 			'mobile'=>$mobile,
 			'msg'=>$msg,
-            'account'=>$this->account,
-            'pswd'=>$this->pswd,
+            'account'=>$this->config['account'],
+            'pswd'=>$this->config['pswd'],
             'needstatus'=>$needStatus
 		]);
 		$ch = curl_init();
@@ -39,9 +42,9 @@ class SMSClient {
 		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-		if(!empty($this->proxy)) {
-			curl_setopt($ch, CURLOPT_PROXY, $this->proxy['host']);
-			curl_setopt($ch, CURLOPT_PROXYPORT, $this->proxy['port']);
+		if(!empty($this->config['proxy_host'])) {
+			curl_setopt($ch, CURLOPT_PROXY, $this->config['proxy_host']);
+			curl_setopt($ch, CURLOPT_PROXYPORT, $this->config['proxy_port']);
 		}
 		$result = curl_exec($ch);
 		curl_close($ch);
