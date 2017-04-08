@@ -114,10 +114,9 @@ class SMTPClient {
 			fwrite($socket, "QUIT"."\r\n");
 			fclose($socket);
 		} catch (Exception $e) {
-			//echo "Error while sending email. Reason : \n" . $e->getMessage();
-			return false;
+			return "Error while sending email. Reason : \n" . $e->getMessage();
 		}
-		return true;
+		return "OK";
 	}
 
 	/** Verify if server responds with a positive preliminary (1xx) status code */
